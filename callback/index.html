@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Connecting — Let Claudio Cook Studio</title>
+<link rel="icon" href="../icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main>
+<header><img src="../icon.png" alt="Let Claudio Cook logo"><a href="../">Let Claudio Cook</a></header>
+<span class="kicker">TikTok authorization</span>
+<h1 id="title">Connecting…</h1>
+<div class="card"><p id="msg">Reading the authorization from TikTok…</p></div>
+<script>
+(function () {
+  var p = new URLSearchParams(location.search);
+  var code = p.get("code"), state = p.get("state"), err = p.get("error");
+  var title = document.getElementById("title"), msg = document.getElementById("msg");
+  if (err) {
+    title.textContent = "Authorization cancelled";
+    msg.textContent = "TikTok returned: " + err + (p.get("error_description") ? " — " + p.get("error_description") : "");
+    return;
+  }
+  if (!code) {
+    title.textContent = "Nothing to do here";
+    msg.textContent = "This page receives the TikTok authorization for Let Claudio Cook Studio. Open it from the Studio login script.";
+    return;
+  }
+  // Hand the code to the Studio login script running on the creator's own computer.
+  var local = "http://localhost:8723/callback?" + new URLSearchParams({ code: code, state: state || "" }).toString();
+  title.textContent = "Almost done";
+  msg.textContent = "Sending the authorization to the Studio on your computer. If nothing happens, make sure the login script is running, then click the button.";
+  var b = document.createElement("button");
+  b.textContent = "Send to my computer";
+  b.style.marginTop = "16px";
+  b.onclick = function () { location.href = local; };
+  msg.parentNode.appendChild(b);
+  setTimeout(function () { location.href = local; }, 800);
+})();
+</script>
+</main>
+</body>
+</html>
